@@ -5,7 +5,7 @@ namespace SFW\Cacher;
 /**
  * Abstraction for all caches.
  */
-abstract class Cache implements \Psr\SimpleCache\CacheInterface
+abstract class Driver implements \Psr\SimpleCache\CacheInterface
 {
     /**
      * Get some value by key.

@@ -5,7 +5,7 @@ namespace SFW\Cacher;
 /**
  * APC.
  */
-class Apc extends Cache
+class Apc extends Driver
 {
     /**
      * Namespace.

@@ -5,7 +5,7 @@ namespace SFW\Cacher;
 /**
  * Memcached.
  */
-class Memcached extends Cache
+class Memcached extends Driver
 {
     /**
      * Memcached object.
