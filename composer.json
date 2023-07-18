@@ -1,0 +1,21 @@
+{
+    "name": "andrianzubko/sfw-cacher",
+    "description": "SFW cacher",
+    "type": "library",
+    "license": "GPL-3.0-or-later",
+    "autoload": {
+        "psr-4": {
+            "SFW\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Andrian Zubko",
+            "email": "ondr@mail.ru"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "psr/simple-cache": "^3.0"
+    }
+}
