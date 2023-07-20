@@ -8,6 +8,16 @@ namespace SFW\Cacher;
 abstract class Driver implements \Psr\SimpleCache\CacheInterface
 {
     /**
+     * Options.
+     */
+    protected array $options;
+
+    /**
+     * If extension not loaded then do nothing.
+     */
+    abstract public function __construct(array $options = []);
+
+    /**
      * Get some value by key.
      */
     abstract public function get(string $key, mixed $default = null): mixed;
@@ -49,7 +59,7 @@ abstract class Driver implements \Psr\SimpleCache\CacheInterface
     abstract public function deleteMultiple(iterable $keys): bool;
 
     /**
-     * Cheking for existing value by key.
+     * Checking for existing value by key.
      */
     abstract public function has(string $key): bool;
 

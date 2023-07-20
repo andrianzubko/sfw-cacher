@@ -10,32 +10,30 @@ class Memcached extends Driver
     /**
      * Memcached object.
      */
-    protected ?\Memcached $memcached = null;
+    protected \Memcached $memcached;
 
     /**
      * If extension not loaded then do nothing.
      */
-    public function __construct(
-        protected null|int|\DateInterval $ttl = 0,
-        ?string $ns = null,
-        ?array $options = null,
-        ?array $servers = null
-    ) {
+    public function __construct(array $options = [])
+    {
         if (!extension_loaded('memcached')) {
             return;
         }
 
+        $this->options = $options;
+
         $this->memcached = new \Memcached();
 
-        $options ??= [];
+        $this->memcached->setOptions(
+            array_merge($this->options['options'] ?? [],
+                [
+                    \Memcached::OPT_PREFIX_KEY => $this->options['ns'] ?? md5(__FILE__),
+                ]
+            )
+        );
 
-        $options[\Memcached::OPT_PREFIX_KEY] ??= $ns ?? md5(__FILE__);
-
-        $this->memcached->setOptions($options);
-
-        $servers ??= [['127.0.0.1', 11211]];
-
-        $this->memcached->addServers($servers);
+        $this->memcached->addServers($this->options['servers'] ?? [['127.0.0.1', 11211]]);
     }
 
     /**
@@ -43,7 +41,7 @@ class Memcached extends Driver
      */
     public function get(string $key, mixed $default = null): mixed
     {
-        if (!isset($this->memcached)) {
+        if (!isset($this->options)) {
             return $default;
         }
 
@@ -57,11 +55,11 @@ class Memcached extends Driver
      */
     public function set(string $key, mixed $value, null|int|\DateInterval $ttl = null): bool
     {
-        if (!isset($this->memcached)) {
+        if (!isset($this->options)) {
             return false;
         }
 
-        return $this->memcached->set($key, $value, $this->fixTtl($ttl ?? $this->ttl));
+        return $this->memcached->set($key, $value, $this->fixTtl($ttl ?? $this->options['ttl']));
     }
 
     /**
@@ -69,7 +67,7 @@ class Memcached extends Driver
      */
     public function delete(string $key): bool
     {
-        if (!isset($this->memcached)) {
+        if (!isset($this->options)) {
             return false;
         }
 
@@ -99,7 +97,7 @@ class Memcached extends Driver
             }
         }
 
-        if (isset($this->memcached)) {
+        if (isset($this->options)) {
             $fetched = $this->memcached->getMulti($keys) ?: [];
         } else {
             $fetched = [];
@@ -129,11 +127,11 @@ class Memcached extends Driver
             }
         }
 
-        if (!isset($this->memcached)) {
+        if (!isset($this->options)) {
             return false;
         }
 
-        return $this->memcached->setMulti($values, $this->fixTtl($ttl ?? $this->ttl));
+        return $this->memcached->setMulti($values, $this->fixTtl($ttl ?? $this->options['ttl']));
     }
 
     /**
@@ -151,7 +149,7 @@ class Memcached extends Driver
             }
         }
 
-        if (!isset($this->memcached)) {
+        if (!isset($this->options)) {
             return false;
         }
 
@@ -161,11 +159,11 @@ class Memcached extends Driver
     }
 
     /**
-     * Cheking for existing value by key.
+     * Checking for existing value by key.
      */
     public function has(string $key): bool
     {
-        if (!isset($this->memcached)) {
+        if (!isset($this->options)) {
             return false;
         }
 

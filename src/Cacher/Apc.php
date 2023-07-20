@@ -8,20 +8,17 @@ namespace SFW\Cacher;
 class Apc extends Driver
 {
     /**
-     * Namespace.
-     */
-    protected ?string $ns = null;
-
-    /**
      * If extension not loaded then do nothing.
      */
-    public function __construct(protected null|int|\DateInterval $ttl = 0, ?string $ns = null)
+    public function __construct(array $options = [])
     {
         if (!extension_loaded('apcu')) {
             return;
         }
 
-        $this->ns = $ns ?? md5(__FILE__);
+        $this->options = $options;
+
+        $this->options['ns'] ??= md5(__FILE__);
     }
 
     /**
@@ -29,11 +26,11 @@ class Apc extends Driver
      */
     public function get(string $key, mixed $default = null): mixed
     {
-        if (!isset($this->ns)) {
+        if (!isset($this->options)) {
             return $default;
         }
 
-        $value = apcu_fetch($this->ns . $key, $success);
+        $value = apcu_fetch($this->options['ns'] . $key, $success);
 
         return $success ? $value : $default;
     }
@@ -43,11 +40,11 @@ class Apc extends Driver
      */
     public function set(string $key, mixed $value, null|int|\DateInterval $ttl = null): bool
     {
-        if (!isset($this->ns)) {
+        if (!isset($this->options)) {
             return false;
         }
 
-        return apcu_store($this->ns . $key, $value, $this->fixTtl($ttl ?? $this->ttl));
+        return apcu_store($this->options['ns'] . $key, $value, $this->fixTtl($ttl ?? $this->options['ttl']));
     }
 
     /**
@@ -55,11 +52,11 @@ class Apc extends Driver
      */
     public function delete(string $key): bool
     {
-        if (!isset($this->ns)) {
+        if (!isset($this->options)) {
             return false;
         }
 
-        return apcu_delete($this->ns . $key);
+        return apcu_delete($this->options['ns'] . $key);
     }
 
     /**
@@ -85,9 +82,9 @@ class Apc extends Driver
             }
         }
 
-        if (isset($this->ns)) {
+        if (isset($this->options)) {
             $fetched = apcu_fetch(
-                array_map(fn($k) => $this->ns . $k, $keys)
+                array_map(fn($k) => $this->options['ns'] . $k, $keys)
             );
         } else {
             $fetched = [];
@@ -96,7 +93,7 @@ class Apc extends Driver
         $values = [];
 
         foreach ($keys as $key) {
-            $values[$key] = $fetched[$this->ns . $key] ?? $default;
+            $values[$key] = $fetched[$this->options['ns'] . $key] ?? $default;
         }
 
         return $values;
@@ -117,14 +114,14 @@ class Apc extends Driver
             }
         }
 
-        if (!isset($this->ns)) {
+        if (!isset($this->options)) {
             return false;
         }
 
         return !apcu_store(
             array_combine(
-                array_map(fn($k) => $this->ns . $k, array_keys($values)), $values
-            ), null, $this->fixTtl($ttl ?? $this->ttl)
+                array_map(fn($k) => $this->options['ns'] . $k, array_keys($values)), $values
+            ), null, $this->fixTtl($ttl ?? $this->options['ttl'])
         );
     }
 
@@ -143,26 +140,26 @@ class Apc extends Driver
             }
         }
 
-        if (!isset($this->ns)) {
+        if (!isset($this->options)) {
             return false;
         }
 
         return apcu_delete(
             new \APCUIterator(
-                array_map(fn($k) => $this->ns . $k, $keys)
+                array_map(fn($k) => $this->options['ns'] . $k, $keys)
             )
         );
     }
 
     /**
-     * Cheking for existing value by key.
+     * Checking for existing value by key.
      */
     public function has(string $key): bool
     {
-        if (!isset($this->ns)) {
+        if (!isset($this->options)) {
             return false;
         }
 
-        return apcu_exists($this->ns . $key);
+        return apcu_exists($this->options['ns'] . $key);
     }
 }
