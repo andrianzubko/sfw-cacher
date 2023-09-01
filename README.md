@@ -1,1 +1,9 @@
-Don't use, please!
+# SFW Cacher
+
+For reference only, because the module is under development.
+
+## Installation
+
+```sh
+composer require andrianzubko/sfw-cacher
+```
