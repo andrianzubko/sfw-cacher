@@ -8,12 +8,14 @@ namespace SFW\Cacher;
 abstract class Driver implements \Psr\SimpleCache\CacheInterface
 {
     /**
-     * Options.
+     * Default TTl.
      */
-    protected array $options;
+    protected int $ttl = 0;
 
     /**
      * If extension not loaded then do nothing.
+     *
+     * @throws CacheException
      */
     abstract public function __construct(array $options = []);
 
@@ -40,21 +42,21 @@ abstract class Driver implements \Psr\SimpleCache\CacheInterface
     /**
      * Get multiple values by multiple keys.
      *
-     * Throws \SFW\Cacher\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     abstract public function getMultiple(iterable $keys, mixed $default = null): iterable;
 
     /**
      * Set multiple values by multiple keys.
      *
-     * Throws \SFW\Cacher\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     abstract public function setMultiple(iterable $values, null|int|\DateInterval $ttl = null): bool;
 
     /**
      * Delete multiple values by multiple keys.
      *
-     * Throws \SFW\Cacher\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     abstract public function deleteMultiple(iterable $keys): bool;
 
@@ -64,22 +66,60 @@ abstract class Driver implements \Psr\SimpleCache\CacheInterface
     abstract public function has(string $key): bool;
 
     /**
-     * Normalize TTL to number.
+     * Check keys.
+     *
+     * @throws InvalidArgumentException
      */
-    protected function fixTtl(mixed $ttl): int
+    protected function checkKeys(iterable $keys): array
     {
-        if (!isset($ttl)) {
-            return 0;
+        foreach ($keys as $key) {
+            if (!is_string($key)
+                && !is_int($key)
+            ) {
+                throw new InvalidArgumentException('Keys must be strings');
+            }
         }
 
-        if (is_numeric($ttl)) {
-            return max((int) $ttl, 0);
+        return iterator_to_array($keys);
+    }
+
+    /**
+     * Check values.
+     *
+     * @throws InvalidArgumentException
+     */
+    protected function checkValues(iterable $values): array
+    {
+        foreach ($values as $key => $value) {
+            if (!is_string($key)
+                && !is_int($key)
+            ) {
+                throw new InvalidArgumentException('Keys must be strings');
+            }
         }
 
-        if ($ttl instanceof \DateInterval) {
-            return (new \DateTime())->setTimestamp(0)->add($ttl)->getTimestamp();
+        return iterator_to_array($values);
+    }
+
+    /**
+     * Normalize TTL.
+     */
+    protected function fixTtl(mixed $ttl, ?int $zero = 0): ?int
+    {
+        if (isset($ttl)) {
+            if ($ttl instanceof \DateInterval) {
+                $ttl = (new \DateTime())->setTimestamp(0)->add($ttl)->getTimestamp();
+            } else {
+                $ttl = (int) $ttl;
+            }
+
+            if ($ttl < 0) {
+                $ttl = 0;
+            }
+        } else {
+            $ttl = $this->ttl;
         }
 
-        return 0;
+        return $ttl ?: $zero;
     }
 }

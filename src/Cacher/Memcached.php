@@ -8,7 +8,7 @@ namespace SFW\Cacher;
 class Memcached extends Driver
 {
     /**
-     * Memcached object.
+     * Memcached instance.
      */
     protected \Memcached $memcached;
 
@@ -21,19 +21,19 @@ class Memcached extends Driver
             return;
         }
 
-        $this->options = $options;
+        $this->ttl = $options['ttl'] ?? $this->ttl;
 
         $this->memcached = new \Memcached();
 
-        $this->memcached->setOptions(
-            array_merge($this->options['options'] ?? [],
-                [
-                    \Memcached::OPT_PREFIX_KEY => $this->options['ns'] ?? md5(__FILE__),
-                ]
-            )
-        );
+        $options['servers'] ??= [['127.0.0.1', 11211]];
 
-        $this->memcached->addServers($this->options['servers'] ?? [['127.0.0.1', 11211]]);
+        $this->memcached->addServers($options['servers']);
+
+        $options['options'] ??= [];
+
+        $options['options'][\Memcached::OPT_PREFIX_KEY] = $options['ns'] ?? md5(__FILE__);
+
+        $this->memcached->setOptions($options['options']);
     }
 
     /**
@@ -41,7 +41,7 @@ class Memcached extends Driver
      */
     public function get(string $key, mixed $default = null): mixed
     {
-        if (!isset($this->options)) {
+        if (!isset($this->memcached)) {
             return $default;
         }
 
@@ -55,11 +55,11 @@ class Memcached extends Driver
      */
     public function set(string $key, mixed $value, null|int|\DateInterval $ttl = null): bool
     {
-        if (!isset($this->options)) {
+        if (!isset($this->memcached)) {
             return false;
         }
 
-        return $this->memcached->set($key, $value, $this->fixTtl($ttl ?? $this->options['ttl']));
+        return $this->memcached->set($key, $value, $this->fixTtl($ttl));
     }
 
     /**
@@ -67,7 +67,7 @@ class Memcached extends Driver
      */
     public function delete(string $key): bool
     {
-        if (!isset($this->options)) {
+        if (!isset($this->memcached)) {
             return false;
         }
 
@@ -85,19 +85,13 @@ class Memcached extends Driver
     /**
      * Get multiple values by multiple keys.
      *
-     * Throws \SFW\Cacher\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function getMultiple(iterable $keys, mixed $default = null): iterable
     {
-        $keys = iterator_to_array($keys);
+        $keys = $this->checkKeys($keys);
 
-        foreach ($keys as $key) {
-            if (!is_string($key) && !is_int($key)) {
-                throw new InvalidArgumentException('Each key must be a string');
-            }
-        }
-
-        if (isset($this->options)) {
+        if (isset($this->memcached)) {
             $fetched = $this->memcached->getMulti($keys) ?: [];
         } else {
             $fetched = [];
@@ -115,41 +109,29 @@ class Memcached extends Driver
     /**
      * Set multiple values by multiple keys.
      *
-     * Throws \SFW\Cacher\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function setMultiple(iterable $values, null|int|\DateInterval $ttl = null): bool
     {
-        $values = iterator_to_array($values);
+        $values = $this->checkValues($values);
 
-        foreach (array_keys($values) as $key) {
-            if (!is_string($key) && !is_int($key)) {
-                throw new InvalidArgumentException('Each key must be a string');
-            }
-        }
-
-        if (!isset($this->options)) {
+        if (!isset($this->memcached)) {
             return false;
         }
 
-        return $this->memcached->setMulti($values, $this->fixTtl($ttl ?? $this->options['ttl']));
+        return $this->memcached->setMulti($values, $this->fixTtl($ttl));
     }
 
     /**
      * Delete multiple values by multiple keys.
      *
-     * Throws \SFW\Cacher\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function deleteMultiple(iterable $keys): bool
     {
-        $keys = iterator_to_array($keys);
+        $keys = $this->checkKeys($keys);
 
-        foreach ($keys as $key) {
-            if (!is_string($key) && !is_int($key)) {
-                throw new InvalidArgumentException('Each key must be a string');
-            }
-        }
-
-        if (!isset($this->options)) {
+        if (!isset($this->memcached)) {
             return false;
         }
 
@@ -163,7 +145,7 @@ class Memcached extends Driver
      */
     public function has(string $key): bool
     {
-        if (!isset($this->options)) {
+        if (!isset($this->memcached)) {
             return false;
         }
 
