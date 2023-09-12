@@ -2,7 +2,4 @@
 
 namespace SFW\Cacher;
 
-/**
- * Exception handler.
- */
-class Exception extends \Exception {}
+class Exception extends \SFW\Exception {}

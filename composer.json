@@ -16,6 +16,7 @@
     ],
     "require": {
         "php": "^8.2",
-        "psr/simple-cache": "^3.0"
+        "psr/simple-cache": "^3.0",
+        "andrianzubko/sfw-exception": "^0"
     }
 }

@@ -23,9 +23,9 @@ class Redis extends Driver
             return;
         }
 
-        $this->ttl = $options['ttl'] ?? $this->ttl;
-
         try {
+            $this->ttl = $options['ttl'] ?? $this->ttl;
+
             $this->redis = new \Redis();
 
             $options['connect'] ??= ['127.0.0.1', 6379, 2.5];
@@ -47,7 +47,7 @@ class Redis extends Driver
     }
 
     /**
-     * @inheritdoc
+     * Get some value by key.
      */
     public function get(string $key, mixed $default = null): mixed
     {
