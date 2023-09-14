@@ -2,4 +2,5 @@
 
 namespace SFW\Cacher;
 
-class InvalidArgumentException extends Exception implements \Psr\SimpleCache\InvalidArgumentException {}
+class InvalidArgumentException extends \SFW\InvalidArgumentException implements
+    \Psr\SimpleCache\InvalidArgumentException {}

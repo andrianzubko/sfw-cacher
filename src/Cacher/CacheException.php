@@ -2,4 +2,4 @@
 
 namespace SFW\Cacher;
 
-class CacheException extends Exception implements \Psr\SimpleCache\CacheException {}
+class CacheException extends \SFW\RuntimeException implements \Psr\SimpleCache\CacheException {}
