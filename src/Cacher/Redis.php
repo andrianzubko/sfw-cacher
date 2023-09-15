@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpComposerExtensionStubsInspection */
 
 namespace SFW\Cacher;
 
@@ -15,7 +15,7 @@ class Redis extends Driver
     /**
      * If extension not loaded then do nothing.
      *
-     * @throws CacheException
+     * @throws RuntimeException
      */
     public function __construct(array $options = [])
     {
@@ -42,7 +42,7 @@ class Redis extends Driver
                 $this->redis->setOption($key, $value);
             }
         } catch (\RedisException $error) {
-            throw new CacheException($error->getMessage());
+            throw new RuntimeException($error->getMessage());
         }
     }
 

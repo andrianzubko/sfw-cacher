@@ -15,7 +15,7 @@ abstract class Driver implements \Psr\SimpleCache\CacheInterface
     /**
      * If extension not loaded then do nothing.
      *
-     * @throws CacheException
+     * @throws RuntimeException
      */
     abstract public function __construct(array $options = []);
 
