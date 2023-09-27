@@ -10,7 +10,9 @@ class Nocache extends Driver
     /**
      * Do nothing.
      */
-    public function __construct(array $options = []) {}
+    public function __construct(array $options = [])
+    {
+    }
 
     /**
      * Get some value by key.

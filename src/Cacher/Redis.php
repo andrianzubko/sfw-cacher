@@ -130,7 +130,8 @@ class Redis extends Driver
                         $fetched[$keys[$i]] = $value;
                     }
                 }
-            } catch (\RedisException) {}
+            } catch (\RedisException) {
+            }
         }
 
         $values = [];

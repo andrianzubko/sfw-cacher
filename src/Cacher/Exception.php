@@ -2,4 +2,6 @@
 
 namespace SFW\Cacher;
 
-interface Exception extends \SFW\Exception {}
+interface Exception extends \SFW\Exception
+{
+}
