@@ -41,8 +41,8 @@ class Redis extends Driver
             foreach ($options['options'] as $key => $value) {
                 $this->redis->setOption($key, $value);
             }
-        } catch (\RedisException $error) {
-            throw new RuntimeException($error->getMessage());
+        } catch (\RedisException $e) {
+            throw new RuntimeException($e->getMessage());
         }
     }
 
