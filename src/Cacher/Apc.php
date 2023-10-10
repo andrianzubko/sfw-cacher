@@ -75,18 +75,14 @@ class Apc extends Driver
     /**
      * Get multiple values by multiple keys.
      *
-     * @throws InvalidArgumentException
+     * @throws Exception\InvalidArgument
      */
     public function getMultiple(iterable $keys, mixed $default = null): iterable
     {
         $keys = $this->checkKeys($keys);
 
         if (isset($this->ns)) {
-            $fetched = apcu_fetch(
-                array_map(
-                    fn($k) => $this->ns . $k, $keys
-                )
-            );
+            $fetched = apcu_fetch(array_map(fn($k) => $this->ns . $k, $keys));
         } else {
             $fetched = [];
         }
@@ -105,7 +101,7 @@ class Apc extends Driver
     /**
      * Set multiple values by multiple keys.
      *
-     * @throws InvalidArgumentException
+     * @throws Exception\InvalidArgument
      */
     public function setMultiple(iterable $values, null|int|\DateInterval $ttl = null): bool
     {
@@ -117,9 +113,7 @@ class Apc extends Driver
 
         return !apcu_store(
             array_combine(
-                array_map(
-                    fn($k) => $this->ns . $k, array_keys($values)
-                ), $values
+                array_map(fn($k) => $this->ns . $k, array_keys($values)), $values
             ), null, $this->fixTtl($ttl)
         );
     }
@@ -127,7 +121,7 @@ class Apc extends Driver
     /**
      * Delete multiple values by multiple keys.
      *
-     * @throws InvalidArgumentException
+     * @throws Exception\InvalidArgument
      */
     public function deleteMultiple(iterable $keys): bool
     {
@@ -138,11 +132,7 @@ class Apc extends Driver
         }
 
         return apcu_delete(
-            new \APCUIterator(
-                array_map(
-                    fn($k) => $this->ns . $k, $keys
-                )
-            )
+            new \APCUIterator(array_map(fn($k) => $this->ns . $k, $keys))
         );
     }
 

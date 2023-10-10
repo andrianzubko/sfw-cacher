@@ -15,7 +15,7 @@ class Redis extends Driver
     /**
      * If extension not loaded then do nothing.
      *
-     * @throws RuntimeException
+     * @throws Exception\Runtime
      */
     public function __construct(array $options = [])
     {
@@ -42,7 +42,7 @@ class Redis extends Driver
                 $this->redis->setOption($key, $value);
             }
         } catch (\RedisException $e) {
-            throw new RuntimeException($e->getMessage());
+            throw new Exception\Runtime($e->getMessage());
         }
     }
 
@@ -107,7 +107,7 @@ class Redis extends Driver
     /**
      * Get multiple values by multiple keys.
      *
-     * @throws InvalidArgumentException
+     * @throws Exception\InvalidArgument
      */
     public function getMultiple(iterable $keys, mixed $default = null): iterable
     {
@@ -146,7 +146,7 @@ class Redis extends Driver
     /**
      * Set multiple values by multiple keys.
      *
-     * @throws InvalidArgumentException
+     * @throws Exception\InvalidArgument
      */
     public function setMultiple(iterable $values, null|int|\DateInterval $ttl = null): bool
     {
@@ -162,8 +162,7 @@ class Redis extends Driver
             $success = true;
 
             foreach ($values as $key => $value) {
-                $success = $this->redis->set($key, $value, $ttl)
-                    ? $success : false;
+                $success = $this->redis->set($key, $value, $ttl) ? $success : false;
             }
 
             return $success;
@@ -175,7 +174,7 @@ class Redis extends Driver
     /**
      * Delete multiple values by multiple keys.
      *
-     * @throws InvalidArgumentException
+     * @throws Exception\InvalidArgument
      */
     public function deleteMultiple(iterable $keys): bool
     {

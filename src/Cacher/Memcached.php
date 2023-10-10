@@ -85,7 +85,7 @@ class Memcached extends Driver
     /**
      * Get multiple values by multiple keys.
      *
-     * @throws InvalidArgumentException
+     * @throws Exception\InvalidArgument
      */
     public function getMultiple(iterable $keys, mixed $default = null): iterable
     {
@@ -109,7 +109,7 @@ class Memcached extends Driver
     /**
      * Set multiple values by multiple keys.
      *
-     * @throws InvalidArgumentException
+     * @throws Exception\InvalidArgument
      */
     public function setMultiple(iterable $values, null|int|\DateInterval $ttl = null): bool
     {
@@ -125,7 +125,7 @@ class Memcached extends Driver
     /**
      * Delete multiple values by multiple keys.
      *
-     * @throws InvalidArgumentException
+     * @throws Exception\InvalidArgument
      */
     public function deleteMultiple(iterable $keys): bool
     {
@@ -149,6 +149,6 @@ class Memcached extends Driver
             return false;
         }
 
-        return !!$this->memcached->getMulti([$key]);
+        return (bool) $this->memcached->getMulti([$key]);
     }
 }

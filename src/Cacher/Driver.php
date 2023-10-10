@@ -15,7 +15,7 @@ abstract class Driver implements \Psr\SimpleCache\CacheInterface
     /**
      * If extension not loaded then do nothing.
      *
-     * @throws RuntimeException
+     * @throws Exception\Runtime
      */
     abstract public function __construct(array $options = []);
 
@@ -42,21 +42,21 @@ abstract class Driver implements \Psr\SimpleCache\CacheInterface
     /**
      * Get multiple values by multiple keys.
      *
-     * @throws InvalidArgumentException
+     * @throws Exception\InvalidArgument
      */
     abstract public function getMultiple(iterable $keys, mixed $default = null): iterable;
 
     /**
      * Set multiple values by multiple keys.
      *
-     * @throws InvalidArgumentException
+     * @throws Exception\InvalidArgument
      */
     abstract public function setMultiple(iterable $values, null|int|\DateInterval $ttl = null): bool;
 
     /**
      * Delete multiple values by multiple keys.
      *
-     * @throws InvalidArgumentException
+     * @throws Exception\InvalidArgument
      */
     abstract public function deleteMultiple(iterable $keys): bool;
 
@@ -68,7 +68,7 @@ abstract class Driver implements \Psr\SimpleCache\CacheInterface
     /**
      * Check keys.
      *
-     * @throws InvalidArgumentException
+     * @throws Exception\InvalidArgument
      */
     protected function checkKeys(iterable $keys): array
     {
@@ -76,7 +76,7 @@ abstract class Driver implements \Psr\SimpleCache\CacheInterface
             if (!is_string($key)
                 && !is_int($key)
             ) {
-                throw new InvalidArgumentException('Keys must be strings');
+                throw new Exception\InvalidArgument('Keys must be strings');
             }
         }
 
@@ -86,7 +86,7 @@ abstract class Driver implements \Psr\SimpleCache\CacheInterface
     /**
      * Check values.
      *
-     * @throws InvalidArgumentException
+     * @throws Exception\InvalidArgument
      */
     protected function checkValues(iterable $values): array
     {
@@ -94,7 +94,7 @@ abstract class Driver implements \Psr\SimpleCache\CacheInterface
             if (!is_string($key)
                 && !is_int($key)
             ) {
-                throw new InvalidArgumentException('Keys must be strings');
+                throw new Exception\InvalidArgument('Keys must be strings');
             }
         }
 
