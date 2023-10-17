@@ -10,7 +10,7 @@ class Redis extends Driver
     /**
      * Redis instance.
      */
-    protected ?\Redis $redis = null;
+    protected \Redis $redis;
 
     /**
      * If extension not loaded then does nothing.
@@ -51,7 +51,7 @@ class Redis extends Driver
      */
     public function get(string $key, mixed $default = null): mixed
     {
-        if ($this->redis === null) {
+        if (!isset($this->redis)) {
             return $default;
         }
 
@@ -69,7 +69,7 @@ class Redis extends Driver
      */
     public function set(string $key, mixed $value, null|int|\DateInterval $ttl = null): bool
     {
-        if ($this->redis === null) {
+        if (!isset($this->redis)) {
             return false;
         }
 
@@ -85,7 +85,7 @@ class Redis extends Driver
      */
     public function delete(string $key): bool
     {
-        if ($this->redis === null) {
+        if (!isset($this->redis)) {
             return false;
         }
 
@@ -107,7 +107,7 @@ class Redis extends Driver
 
         $fetched = [];
 
-        if ($this->redis !== null) {
+        if (isset($this->redis)) {
             try {
                 $this->redis->multi()->mGet($keys);
 
@@ -144,7 +144,7 @@ class Redis extends Driver
     {
         $values = $this->checkValues($values);
 
-        if ($this->redis === null) {
+        if (!isset($this->redis)) {
             return false;
         }
 
@@ -172,7 +172,7 @@ class Redis extends Driver
     {
         $keys = $this->checkKeys($keys);
 
-        if ($this->redis === null) {
+        if (!isset($this->redis)) {
             return false;
         }
 
@@ -190,7 +190,7 @@ class Redis extends Driver
      */
     public function has(string $key): bool
     {
-        if ($this->redis === null) {
+        if (!isset($this->redis)) {
             return false;
         }
 

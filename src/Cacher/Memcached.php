@@ -10,7 +10,7 @@ class Memcached extends Driver
     /**
      * Memcached instance.
      */
-    protected ?\Memcached $memcached = null;
+    protected \Memcached $memcached;
 
     /**
      * If extension not loaded then does nothing.
@@ -41,7 +41,7 @@ class Memcached extends Driver
      */
     public function get(string $key, mixed $default = null): mixed
     {
-        if ($this->memcached === null) {
+        if (!isset($this->memcached)) {
             return $default;
         }
 
@@ -55,7 +55,7 @@ class Memcached extends Driver
      */
     public function set(string $key, mixed $value, null|int|\DateInterval $ttl = null): bool
     {
-        if ($this->memcached === null) {
+        if (!isset($this->memcached)) {
             return false;
         }
 
@@ -67,7 +67,7 @@ class Memcached extends Driver
      */
     public function delete(string $key): bool
     {
-        if ($this->memcached === null) {
+        if (!isset($this->memcached)) {
             return false;
         }
 
@@ -83,7 +83,7 @@ class Memcached extends Driver
     {
         $keys = $this->checkKeys($keys);
 
-        if ($this->memcached !== null) {
+        if (isset($this->memcached)) {
             $fetched = $this->memcached->getMulti($keys) ?: [];
         } else {
             $fetched = [];
@@ -107,7 +107,7 @@ class Memcached extends Driver
     {
         $values = $this->checkValues($values);
 
-        if ($this->memcached === null) {
+        if (!isset($this->memcached)) {
             return false;
         }
 
@@ -123,7 +123,7 @@ class Memcached extends Driver
     {
         $keys = $this->checkKeys($keys);
 
-        if ($this->memcached === null) {
+        if (!isset($this->memcached)) {
             return false;
         }
 
@@ -137,7 +137,7 @@ class Memcached extends Driver
      */
     public function has(string $key): bool
     {
-        if ($this->memcached === null) {
+        if (!isset($this->memcached)) {
             return false;
         }
 

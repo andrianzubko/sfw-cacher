@@ -123,6 +123,6 @@ abstract class Driver implements \Psr\SimpleCache\CacheInterface
             $ttl = $this->ttl;
         }
 
-        return $ttl ?: $zero;
+        return $ttl == 0 ? $zero : $ttl;
     }
 }

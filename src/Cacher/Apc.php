@@ -10,7 +10,7 @@ class Apc extends Driver
     /**
      * Namespace.
      */
-    protected ?string $ns = null;
+    protected string $ns;
 
     /**
      * If extension not loaded then does nothing.
@@ -31,7 +31,7 @@ class Apc extends Driver
      */
     public function get(string $key, mixed $default = null): mixed
     {
-        if ($this->ns === null) {
+        if (!isset($this->ns)) {
             return $default;
         }
 
@@ -45,7 +45,7 @@ class Apc extends Driver
      */
     public function set(string $key, mixed $value, null|int|\DateInterval $ttl = null): bool
     {
-        if ($this->ns === null) {
+        if (!isset($this->ns)) {
             return false;
         }
 
@@ -57,7 +57,7 @@ class Apc extends Driver
      */
     public function delete(string $key): bool
     {
-        if ($this->ns === null) {
+        if (!isset($this->ns)) {
             return false;
         }
 
@@ -73,7 +73,7 @@ class Apc extends Driver
     {
         $keys = $this->checkKeys($keys);
 
-        if ($this->ns !== null) {
+        if (isset($this->ns)) {
             $fetched = apcu_fetch(array_map(fn($k) => $this->ns . $k, $keys));
         } else {
             $fetched = [];
@@ -82,9 +82,11 @@ class Apc extends Driver
         $values = [];
 
         foreach ($keys as $key) {
-            $values[$key] = isset($this->ns, $fetched[$this->ns . $key])
-                ? $fetched[$this->ns . $key]
-                    : $default;
+            if (isset($this->ns, $fetched[$this->ns . $key])) {
+                $values[$key] = $fetched[$this->ns . $key];
+            } else {
+                $values[$key] = $default;
+            }
         }
 
         return $values;
@@ -99,7 +101,7 @@ class Apc extends Driver
     {
         $values = $this->checkValues($values);
 
-        if ($this->ns === null) {
+        if (!isset($this->ns)) {
             return false;
         }
 
@@ -119,13 +121,11 @@ class Apc extends Driver
     {
         $keys = $this->checkKeys($keys);
 
-        if ($this->ns === null) {
+        if (!isset($this->ns)) {
             return false;
         }
 
-        return apcu_delete(
-            new \APCUIterator(array_map(fn($k) => $this->ns . $k, $keys))
-        );
+        return apcu_delete(new \APCUIterator(array_map(fn($k) => $this->ns . $k, $keys)));
     }
 
     /**
@@ -133,7 +133,7 @@ class Apc extends Driver
      */
     public function has(string $key): bool
     {
-        if ($this->ns === null) {
+        if (!isset($this->ns)) {
             return false;
         }
 
