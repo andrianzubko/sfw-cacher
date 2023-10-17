@@ -10,10 +10,10 @@ class Redis extends Driver
     /**
      * Redis instance.
      */
-    protected \Redis $redis;
+    protected ?\Redis $redis = null;
 
     /**
-     * If extension not loaded then do nothing.
+     * If extension not loaded then does nothing.
      *
      * @throws Exception\Runtime
      */
@@ -47,11 +47,11 @@ class Redis extends Driver
     }
 
     /**
-     * Get some value by key.
+     * Fetches a value from the cache.
      */
     public function get(string $key, mixed $default = null): mixed
     {
-        if (!isset($this->redis)) {
+        if ($this->redis === null) {
             return $default;
         }
 
@@ -65,11 +65,11 @@ class Redis extends Driver
     }
 
     /**
-     * Set some value by key.
+     * Persists data in the cache, uniquely referenced by a key with an optional expiration TTL time.
      */
     public function set(string $key, mixed $value, null|int|\DateInterval $ttl = null): bool
     {
-        if (!isset($this->redis)) {
+        if ($this->redis === null) {
             return false;
         }
 
@@ -81,11 +81,11 @@ class Redis extends Driver
     }
 
     /**
-     * Delete some value by key.
+     * Delete an item from the cache by its unique key.
      */
     public function delete(string $key): bool
     {
-        if (!isset($this->redis)) {
+        if ($this->redis === null) {
             return false;
         }
 
@@ -97,15 +97,7 @@ class Redis extends Driver
     }
 
     /**
-     * Clear cache not implemented!
-     */
-    public function clear(): bool
-    {
-        return false;
-    }
-
-    /**
-     * Get multiple values by multiple keys.
+     * Obtains multiple cache items by their unique keys.
      *
      * @throws Exception\InvalidArgument
      */
@@ -115,7 +107,7 @@ class Redis extends Driver
 
         $fetched = [];
 
-        if (isset($this->redis)) {
+        if ($this->redis !== null) {
             try {
                 $this->redis->multi()->mGet($keys);
 
@@ -144,7 +136,7 @@ class Redis extends Driver
     }
 
     /**
-     * Set multiple values by multiple keys.
+     * Persists a set of key => value pairs in the cache, with an optional TTL.
      *
      * @throws Exception\InvalidArgument
      */
@@ -152,7 +144,7 @@ class Redis extends Driver
     {
         $values = $this->checkValues($values);
 
-        if (!isset($this->redis)) {
+        if ($this->redis === null) {
             return false;
         }
 
@@ -172,7 +164,7 @@ class Redis extends Driver
     }
 
     /**
-     * Delete multiple values by multiple keys.
+     * Deletes multiple cache items in a single operation.
      *
      * @throws Exception\InvalidArgument
      */
@@ -180,7 +172,7 @@ class Redis extends Driver
     {
         $keys = $this->checkKeys($keys);
 
-        if (!isset($this->redis)) {
+        if ($this->redis === null) {
             return false;
         }
 
@@ -194,11 +186,11 @@ class Redis extends Driver
     }
 
     /**
-     * Checking for existing value by key.
+     * Determines whether an item is present in the cache.
      */
     public function has(string $key): bool
     {
-        if (!isset($this->redis)) {
+        if ($this->redis === null) {
             return false;
         }
 

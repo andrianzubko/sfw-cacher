@@ -13,60 +13,63 @@ abstract class Driver implements \Psr\SimpleCache\CacheInterface
     protected int $ttl = 0;
 
     /**
-     * If extension not loaded then do nothing.
+     * If extension not loaded then does nothing.
      *
      * @throws Exception\Runtime
      */
     abstract public function __construct(array $options = []);
 
     /**
-     * Get some value by key.
+     * Fetches a value from the cache.
      */
     abstract public function get(string $key, mixed $default = null): mixed;
 
     /**
-     * Set some value by key.
+     * Persists data in the cache, uniquely referenced by a key with an optional expiration TTL time.
      */
     abstract public function set(string $key, mixed $value, null|int|\DateInterval $ttl = null): bool;
 
     /**
-     * Delete some value by key.
+     * Delete an item from the cache by its unique key.
      */
     abstract public function delete(string $key): bool;
 
     /**
-     * Clear cache not implemented!
+     * Not implemented!
      */
-    abstract public function clear(): bool;
+    public function clear(): bool
+    {
+        return false;
+    }
 
     /**
-     * Get multiple values by multiple keys.
+     * Obtains multiple cache items by their unique keys.
      *
      * @throws Exception\InvalidArgument
      */
     abstract public function getMultiple(iterable $keys, mixed $default = null): iterable;
 
     /**
-     * Set multiple values by multiple keys.
+     * Persists a set of key => value pairs in the cache, with an optional TTL.
      *
      * @throws Exception\InvalidArgument
      */
     abstract public function setMultiple(iterable $values, null|int|\DateInterval $ttl = null): bool;
 
     /**
-     * Delete multiple values by multiple keys.
+     * Deletes multiple cache items in a single operation.
      *
      * @throws Exception\InvalidArgument
      */
     abstract public function deleteMultiple(iterable $keys): bool;
 
     /**
-     * Checking for existing value by key.
+     * Determines whether an item is present in the cache.
      */
     abstract public function has(string $key): bool;
 
     /**
-     * Check keys.
+     * Checks keys.
      *
      * @throws Exception\InvalidArgument
      */
@@ -84,7 +87,7 @@ abstract class Driver implements \Psr\SimpleCache\CacheInterface
     }
 
     /**
-     * Check values.
+     * Checks values.
      *
      * @throws Exception\InvalidArgument
      */
@@ -102,11 +105,11 @@ abstract class Driver implements \Psr\SimpleCache\CacheInterface
     }
 
     /**
-     * Normalize TTL.
+     * Normalizes TTL.
      */
     protected function fixTtl(mixed $ttl, ?int $zero = 0): ?int
     {
-        if (isset($ttl)) {
+        if ($ttl !== null) {
             if ($ttl instanceof \DateInterval) {
                 $ttl = (new \DateTime())->setTimestamp(0)->add($ttl)->getTimestamp();
             } else {

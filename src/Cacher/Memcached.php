@@ -10,10 +10,10 @@ class Memcached extends Driver
     /**
      * Memcached instance.
      */
-    protected \Memcached $memcached;
+    protected ?\Memcached $memcached = null;
 
     /**
-     * If extension not loaded then do nothing.
+     * If extension not loaded then does nothing.
      */
     public function __construct(array $options = [])
     {
@@ -37,11 +37,11 @@ class Memcached extends Driver
     }
 
     /**
-     * Get some value by key.
+     * Fetches a value from the cache.
      */
     public function get(string $key, mixed $default = null): mixed
     {
-        if (!isset($this->memcached)) {
+        if ($this->memcached === null) {
             return $default;
         }
 
@@ -51,11 +51,11 @@ class Memcached extends Driver
     }
 
     /**
-     * Set some value by key.
+     * Persists data in the cache, uniquely referenced by a key with an optional expiration TTL time.
      */
     public function set(string $key, mixed $value, null|int|\DateInterval $ttl = null): bool
     {
-        if (!isset($this->memcached)) {
+        if ($this->memcached === null) {
             return false;
         }
 
@@ -63,11 +63,11 @@ class Memcached extends Driver
     }
 
     /**
-     * Delete some value by key.
+     * Delete an item from the cache by its unique key.
      */
     public function delete(string $key): bool
     {
-        if (!isset($this->memcached)) {
+        if ($this->memcached === null) {
             return false;
         }
 
@@ -75,15 +75,7 @@ class Memcached extends Driver
     }
 
     /**
-     * Clear cache not implemented!
-     */
-    public function clear(): bool
-    {
-        return false;
-    }
-
-    /**
-     * Get multiple values by multiple keys.
+     * Obtains multiple cache items by their unique keys.
      *
      * @throws Exception\InvalidArgument
      */
@@ -91,7 +83,7 @@ class Memcached extends Driver
     {
         $keys = $this->checkKeys($keys);
 
-        if (isset($this->memcached)) {
+        if ($this->memcached !== null) {
             $fetched = $this->memcached->getMulti($keys) ?: [];
         } else {
             $fetched = [];
@@ -107,7 +99,7 @@ class Memcached extends Driver
     }
 
     /**
-     * Set multiple values by multiple keys.
+     * Persists a set of key => value pairs in the cache, with an optional TTL.
      *
      * @throws Exception\InvalidArgument
      */
@@ -115,7 +107,7 @@ class Memcached extends Driver
     {
         $values = $this->checkValues($values);
 
-        if (!isset($this->memcached)) {
+        if ($this->memcached === null) {
             return false;
         }
 
@@ -123,7 +115,7 @@ class Memcached extends Driver
     }
 
     /**
-     * Delete multiple values by multiple keys.
+     * Deletes multiple cache items in a single operation.
      *
      * @throws Exception\InvalidArgument
      */
@@ -131,7 +123,7 @@ class Memcached extends Driver
     {
         $keys = $this->checkKeys($keys);
 
-        if (!isset($this->memcached)) {
+        if ($this->memcached === null) {
             return false;
         }
 
@@ -141,11 +133,11 @@ class Memcached extends Driver
     }
 
     /**
-     * Checking for existing value by key.
+     * Determines whether an item is present in the cache.
      */
     public function has(string $key): bool
     {
-        if (!isset($this->memcached)) {
+        if ($this->memcached === null) {
             return false;
         }
 
