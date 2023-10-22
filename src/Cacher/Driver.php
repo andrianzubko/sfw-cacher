@@ -76,9 +76,7 @@ abstract class Driver implements \Psr\SimpleCache\CacheInterface
     protected function checkKeys(iterable $keys): array
     {
         foreach ($keys as $key) {
-            if (!is_string($key)
-                && !is_int($key)
-            ) {
+            if (!\is_string($key) && !\is_int($key)) {
                 throw new Exception\InvalidArgument('Keys must be strings');
             }
         }
@@ -94,9 +92,7 @@ abstract class Driver implements \Psr\SimpleCache\CacheInterface
     protected function checkValues(iterable $values): array
     {
         foreach ($values as $key => $value) {
-            if (!is_string($key)
-                && !is_int($key)
-            ) {
+            if (!\is_string($key) && !\is_int($key)) {
                 throw new Exception\InvalidArgument('Keys must be strings');
             }
         }
