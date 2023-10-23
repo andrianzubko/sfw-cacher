@@ -69,7 +69,7 @@ class Apc extends Driver
      *
      * @throws Exception\InvalidArgument
      */
-    public function getMultiple(iterable $keys, mixed $default = null): iterable
+    public function getMultiple(iterable $keys, mixed $default = null): array
     {
         $keys = $this->checkKeys($keys);
 

@@ -47,7 +47,7 @@ abstract class Driver implements \Psr\SimpleCache\CacheInterface
      *
      * @throws Exception\InvalidArgument
      */
-    abstract public function getMultiple(iterable $keys, mixed $default = null): iterable;
+    abstract public function getMultiple(iterable $keys, mixed $default = null): array;
 
     /**
      * Persists a set of key => value pairs in the cache, with an optional TTL.
