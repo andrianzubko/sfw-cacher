@@ -1,4 +1,5 @@
 <?php /** @noinspection PhpComposerExtensionStubsInspection */
+
 declare(strict_types=1);
 
 namespace SFW\Cacher;
@@ -123,8 +124,7 @@ class Redis extends Driver
                         $fetched[$keys[$i]] = $value;
                     }
                 }
-            } catch (\RedisException) {
-            }
+            } catch (\RedisException) {}
         }
 
         $values = [];

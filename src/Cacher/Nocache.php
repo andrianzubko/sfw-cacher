@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace SFW\Cacher;
@@ -11,9 +12,7 @@ class Nocache extends Driver
     /**
      * Does nothing.
      */
-    public function __construct(array $options = [])
-    {
-    }
+    public function __construct(array $options = []) {}
 
     /**
      * Fetches a value from the cache.
